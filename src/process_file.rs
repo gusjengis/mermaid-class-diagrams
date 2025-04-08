@@ -1,5 +1,5 @@
 use std::path::Path;
-use syn::{File, Item};
+use syn::{File, Item, TraitItem};
 
 pub fn process_file(syntax: &File, diagram: &mut String) {
     for item in &syntax.items {
@@ -33,7 +33,38 @@ pub fn process_file(syntax: &File, diagram: &mut String) {
             Item::Trait(t) => {
                 let trait_name = t.ident.to_string();
                 diagram.push_str(&format!("class {} {{\n", trait_name));
-                // You might add methods from the trait here
+                // Add methods from the trait
+                for item in &t.items {
+                    if let syn::TraitItem::Fn(method) = item {
+                        let method_name = method.sig.ident.to_string();
+                        let return_type = if let syn::ReturnType::Type(_, ty) = &method.sig.output {
+                            format!(" -> {}", quote::quote!(#ty))
+                        } else {
+                            String::new()
+                        };
+
+                        // Format parameters
+                        let params: Vec<String> = method
+                            .sig
+                            .inputs
+                            .iter()
+                            .filter_map(|param| {
+                                if let syn::FnArg::Typed(pat_type) = param {
+                                    Some(quote::quote!(#pat_type).to_string())
+                                } else {
+                                    None
+                                }
+                            })
+                            .collect();
+
+                        diagram.push_str(&format!(
+                            "  +{}({}){}\n",
+                            method_name,
+                            params.join(", "),
+                            return_type
+                        ));
+                    }
+                }
                 diagram.push_str("}\n\n");
             }
             // You can extend to include impl blocks for relationships if desired.
