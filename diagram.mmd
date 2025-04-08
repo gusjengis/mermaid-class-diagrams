@@ -1,0 +1,45 @@
+classDiagram
+
+class Class {
+  +visibility: Visibility 
+  +fields : Vec < Field > 
+  +functions : Vec < Function > 
+  +children : Vec < String > 
+}
+
+Class <|-- Visibility
+Class <|-- Field
+Class <|-- Function
+
+class Field {
+  +pub visibilty : Visibility 
+  +pub name : String 
+  +pub type_string : String 
+}
+
+Field <|-- Visibility
+
+class Function {
+  +pub visibilty : Visibility 
+  +pub name : String 
+  +pub parameters : Vec < Parameter > 
+  +pub return_type : String 
+}
+
+Function <|-- Visibility
+Function <|-- Parameter
+
+class Parameter {
+  +pub name : String 
+  +pub type_string : String 
+}
+
+class Visibility {
+  +Public
+  +Private
+}
+
+class MermaidDiagram {
+  +to_diagram_syntax() -> String
+}
+

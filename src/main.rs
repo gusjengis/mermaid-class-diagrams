@@ -1,3 +1,4 @@
+mod class;
 mod discover_types;
 mod get_rust_files;
 mod parse_rust_file;
@@ -11,12 +12,24 @@ use std::collections::HashSet;
 use std::env;
 use std::error::Error;
 use std::fs;
+use std::process::Command;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    // Get command-line arguments and use the first argument as the directory.
+    // Get command-line arguments
     let args: Vec<String> = env::args().collect();
-    // Use the provided directory or default to "src"
-    let dir_to_scan = if args.len() > 1 { &args[1] } else { "src" };
+
+    // Parse arguments
+    let mut dir_to_scan = "src";
+    let mut generate_png = true;
+
+    // Simple argument parsing
+    for i in 1..args.len() {
+        if args[i] == "--no-png" {
+            generate_png = false;
+        } else if !args[i].starts_with("--") {
+            dir_to_scan = &args[i];
+        }
+    }
     let rust_files = get_rust_files(dir_to_scan);
     let mut diagram = String::from("classDiagram\n\n");
     let mut defined_types = vec![];
@@ -34,6 +47,42 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Write the output to a file, e.g. diagram.mmd
     fs::write("diagram.mmd", diagram)?;
     println!("Mermaid diagram generated: diagram.mmd");
+
+    // Generate PNG using mmdc (Mermaid CLI)
+    println!("Generating PNG from diagram...");
+    let sudo_user = env::var("SUDO_USER").unwrap_or_else(|_| "your_username".to_string());
+
+    let output = Command::new("sudo")
+        .arg("-u")
+        .arg(&sudo_user)
+        .arg("mmdc")
+        .arg("-i")
+        .arg("diagram.mmd")
+        .arg("-o")
+        .arg("diagram.png")
+        .output();
+
+    match output {
+        Ok(output) => {
+            if output.status.success() {
+                println!("PNG diagram generated successfully: diagram.png");
+            } else {
+                eprintln!(
+                    "Failed to generate PNG: {}",
+                    String::from_utf8_lossy(&output.stderr)
+                );
+                eprintln!(
+                    "Make sure you have mermaid-cli installed (npm install -g @mermaid-js/mermaid-cli)"
+                );
+            }
+        }
+        Err(e) => {
+            eprintln!("Error executing mmdc command: {}", e);
+            eprintln!(
+                "Make sure you have mermaid-cli installed (npm install -g @mermaid-js/mermaid-cli)"
+            );
+        }
+    }
 
     Ok(())
 }
