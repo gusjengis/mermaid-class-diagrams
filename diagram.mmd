@@ -3,7 +3,17 @@ classDiagram
 class Person {
   +pub name : String 
   +pub age : u32 
+  +pub house : House 
 }
+
+Person <|-- House
+
+class House {
+  +pub addr : String 
+  +pub color : Color 
+}
+
+House <|-- Color
 
 class Color {
   +Red

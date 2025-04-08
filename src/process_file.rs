@@ -1,18 +1,27 @@
+use quote::ToTokens;
 use std::path::Path;
-use syn::{File, Item, TraitItem};
+use std::{any::Any, collections::HashSet};
+use syn::{File, Item, TraitItem, Type};
 
-pub fn process_file(syntax: &File, diagram: &mut String) {
+pub fn process_file(syntax: &File, diagram: &mut String, defined_types: &HashSet<&String>) {
     for item in &syntax.items {
+        let mut item_name = "".to_string();
+        let mut children = vec![];
         match item {
             Item::Struct(s) => {
-                let struct_name = s.ident.to_string();
+                item_name = s.ident.to_string();
                 // Start a Mermaid class definition:
-                diagram.push_str(&format!("class {} {{\n", struct_name));
+                diagram.push_str(&format!("class {} {{\n", item_name));
 
                 // Optionally, list fields (if the struct has named fields)
                 if let syn::Fields::Named(fields) = &s.fields {
                     for field in fields.named.iter() {
-                        if let Some(_) = &field.ident {
+                        if let Some(ident) = &field.ident {
+                            for token in field.ty.to_token_stream() {
+                                if defined_types.contains(&token.to_string()) {
+                                    children.push(token.to_string());
+                                }
+                            }
                             let mut field = quote::quote!(#field.ty).to_string(); // Get field string
                             field.truncate(field.len() - 4); // Remove weird stuff from the end
                             diagram.push_str(&format!("  +{}\n", field));
@@ -22,8 +31,8 @@ pub fn process_file(syntax: &File, diagram: &mut String) {
                 diagram.push_str("}\n\n");
             }
             Item::Enum(e) => {
-                let enum_name = e.ident.to_string();
-                diagram.push_str(&format!("class {} {{\n", enum_name));
+                item_name = e.ident.to_string();
+                diagram.push_str(&format!("class {} {{\n", item_name));
                 // Enumerators can be treated as values or attributes:
                 for variant in &e.variants {
                     diagram.push_str(&format!("  +{}\n", variant.ident));
@@ -31,8 +40,8 @@ pub fn process_file(syntax: &File, diagram: &mut String) {
                 diagram.push_str("}\n\n");
             }
             Item::Trait(t) => {
-                let trait_name = t.ident.to_string();
-                diagram.push_str(&format!("class {} {{\n", trait_name));
+                item_name = t.ident.to_string();
+                diagram.push_str(&format!("class {} {{\n", item_name));
                 // Add methods from the trait
                 for item in &t.items {
                     if let syn::TraitItem::Fn(method) = item {
@@ -69,6 +78,13 @@ pub fn process_file(syntax: &File, diagram: &mut String) {
             }
             // You can extend to include impl blocks for relationships if desired.
             _ => {}
+        }
+
+        for child in &children {
+            diagram.push_str(format!("{} <|-- {}\n", item_name, child).as_str());
+        }
+        if !children.is_empty() {
+            diagram.push_str("\n");
         }
     }
 }
