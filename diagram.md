@@ -1,3 +1,4 @@
+```mermaid
 classDiagram
 
 class Person {
@@ -6,7 +7,7 @@ class Person {
   +pub house : House 
 }
 
-Person <|-- House
+House <|-- Person
 
 class Town {
   +pub houses : Vec < House > 
@@ -32,4 +33,6 @@ class Color {
 class Greet {
   +greet() -> String
 }
+```
+
 
