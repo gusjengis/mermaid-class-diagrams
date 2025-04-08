@@ -12,10 +12,10 @@ pub fn process_file(syntax: &File, diagram: &mut String) {
                 // Optionally, list fields (if the struct has named fields)
                 if let syn::Fields::Named(fields) = &s.fields {
                     for field in fields.named.iter() {
-                        if let Some(ident) = &field.ident {
-                            // You might want to show the field type as well:
-                            let ty = quote::quote!(#field.ty).to_string();
-                            diagram.push_str(&format!("  +{}: {}\n", ident, ty));
+                        if let Some(_) = &field.ident {
+                            let mut field = quote::quote!(#field.ty).to_string(); // Get field string
+                            field.truncate(field.len() - 4); // Remove weird stuff from the end
+                            diagram.push_str(&format!("  +{}\n", field));
                         }
                     }
                 }
