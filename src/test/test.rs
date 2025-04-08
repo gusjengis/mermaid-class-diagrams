@@ -1,8 +1,12 @@
-// src/sample.rs
 pub struct Person {
     pub name: String,
     pub age: u32,
     pub house: House,
+}
+
+pub struct Town {
+    pub houses: Vec<House>,
+    pub residents: Vec<Person>,
 }
 
 struct House {

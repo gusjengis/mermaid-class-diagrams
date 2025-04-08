@@ -8,6 +8,14 @@ class Person {
 
 Person <|-- House
 
+class Town {
+  +pub houses : Vec < House > 
+  +pub residents : Vec < Person > 
+}
+
+Town <|-- House
+Town <|-- Person
+
 class House {
   +pub addr : String 
   +pub color : Color 
