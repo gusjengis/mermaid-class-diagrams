@@ -22,10 +22,14 @@ impl MermaidDiagram for Class {
 
         res.push_str("}\n");
 
-        for connection in &self.connections {
+        res.push_str("\n");
+
+        for connection in self.connections.values() {
             res.push_str(connection.to_diagram_syntax(settings).as_str());
             res.push_str("\n");
         }
+
+        res.push_str("\n");
 
         res
     }

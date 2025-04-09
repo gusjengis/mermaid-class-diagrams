@@ -1,35 +1,102 @@
 classDiagram
 
+class init_classes {
++pub: 
+}
+
+main ..> init_classes
+
+class get_rust_files {
++pub: 
+}
+
+main ..> get_rust_files
+
+class parse_rust_file {
++pub: 
+}
+
+main ..> parse_rust_file
+
 class MermaidDiagram {
 +to_diagram_syntax() String
 }
+
+Visibility <|-- MermaidDiagram
+Relationship <|-- MermaidDiagram
 Class <|-- MermaidDiagram
 Function <|-- MermaidDiagram
-Field <|-- MermaidDiagram
-Visibility <|-- MermaidDiagram
 Connection <|-- MermaidDiagram
-Relationship <|-- MermaidDiagram
+Field <|-- MermaidDiagram
+
+class find_relationships {
++pub: 
+}
+
+main ..> find_relationships
+
+class eval_statements {
+-: 
+}
+
+find_relationships ..> eval_statements
+eval_expr ..> eval_statements
+
+class eval_arms {
+-: 
+}
+
+eval_expr ..> eval_arms
+
+class eval_exprs {
+-: 
+}
+
+eval_expr ..> eval_exprs
+
+class eval_expr {
+-: 
+}
+
+eval_arms ..> eval_expr
+eval_exprs ..> eval_expr
+eval_statements ..> eval_expr
+eval_expr ..> eval_expr
+
+class check_connection {
+-: 
+}
+
+eval_statements ..> check_connection
+eval_expr ..> check_connection
+
 class Class {
 ~visibility: Visibility
 ~name: String
 ~fields: Vec < Field >
 ~functions: Vec < Function >
-~connections: Vec < Connection >
+~connections: HashMap < String , Connection >
 +new() Self
++add_connection() 
 }
-Class --> Visibility
-Class --> Field
+
 Class --> Function
 Class --> Connection
-Class ..> Visibility
+Class --> Field
+find_relationships ..> Class
+Class --> Visibility
+init_classes ..> Class
+
 class Field {
 ~visibility: Visibility
 ~name: String
 ~type_string: String
 +new() Self
 }
-Field --> Visibility
+
 Field ..> Visibility
+Field --> Visibility
+
 class Function {
 ~visibility: Visibility
 ~name: String
@@ -37,39 +104,63 @@ class Function {
 ~return_type: String
 +new() Self
 }
+
 Function --> Visibility
 Function ..> Visibility
+
 class Connection {
 ~name_a: String
 ~name_b: String
 ~relationship: Relationship
 +new() Self
 }
+
+find_relationships ..> Connection
 Connection --> Relationship
+check_connection ..> Connection
 Connection ..> Relationship
+
 class Relationship {
 +Inheritance: 
 +Association: 
 +Dependency: 
 }
+
+
 class Visibility {
 +Public: 
 +Private: 
 +Internal: 
 +from_vis() Self
 }
+
+find_relationships ..> Visibility
+init_classes ..> Visibility
+
 class Settings {
 +image_settings: ImageSettings
 +diagram_settings: DiagramSettings
 +defaults() Self
 }
+
+main ..> Settings
 Settings --> ImageSettings
 Settings --> DiagramSettings
+
 class ImageSettings {
 +enabled: bool
 +scale: u32
 }
+
+
 class DiagramSettings {
 +show_parameters: bool
 }
+
 MermaidDiagram ..> DiagramSettings
+
+class main {
+-: 
+}
+
+

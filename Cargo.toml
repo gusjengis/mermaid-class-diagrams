@@ -7,3 +7,4 @@ edition = "2024"
 quote = "1.0.40"
 syn = { version = "2.0.100", features = ["full", "parsing"] }
 walkdir = "2.5.0"
+proc-macro2 = "1.0.94"

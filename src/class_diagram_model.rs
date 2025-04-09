@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use quote::ToTokens;
 type Vis = syn::Visibility;
 
@@ -7,7 +9,7 @@ pub struct Class {
     pub(crate) name: String,
     pub(crate) fields: Vec<Field>,
     pub(crate) functions: Vec<Function>,
-    pub(crate) connections: Vec<Connection>,
+    pub(crate) connections: HashMap<String, Connection>,
 }
 
 #[derive(Clone)]
@@ -53,7 +55,13 @@ impl Class {
             name,
             fields: vec![],
             functions: vec![],
-            connections: vec![],
+            connections: HashMap::new(),
+        }
+    }
+
+    pub fn add_connection(&mut self, name: String, connection: Connection) {
+        if !self.connections.contains_key(name.as_str()) {
+            self.connections.insert(name, connection);
         }
     }
 }

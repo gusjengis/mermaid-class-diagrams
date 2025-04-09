@@ -80,6 +80,17 @@ pub fn init_classes(syntax: &File) -> (Vec<String>, Vec<Class>) {
                 class_names.push(item.ident.to_string());
                 classes.push(class);
             }
+            Item::Fn(item) => {
+                let mut class =
+                    Class::new(Visibility::from_vis(&item.vis), item.sig.ident.to_string());
+                class.fields.push(Field::new(
+                    Visibility::from_vis(&item.vis),
+                    item.vis.to_token_stream().to_string(),
+                    "".to_string(),
+                ));
+                class_names.push(item.sig.ident.to_string());
+                classes.push(class);
+            }
             _ => {}
         }
     }
