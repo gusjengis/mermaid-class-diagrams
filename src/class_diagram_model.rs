@@ -43,6 +43,7 @@ pub enum Relationship {
 
 #[derive(Clone)]
 pub enum Visibility {
+    None,
     Public,
     Private,
     Internal,

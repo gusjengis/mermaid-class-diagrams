@@ -68,6 +68,7 @@ impl MermaidDiagram for Visibility {
             Visibility::Public => "+".to_string(),
             Visibility::Internal => "~".to_string(),
             Visibility::Private => "-".to_string(),
+            Visibility::None => "".to_string(),
         }
     }
 }

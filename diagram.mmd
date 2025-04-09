@@ -1,19 +1,19 @@
 classDiagram
 
 class init_classes {
-+pub: 
+pub: FUNCTION
 }
 
 main ..> init_classes
 
 class get_rust_files {
-+pub: 
+pub: FUNCTION
 }
 
 main ..> get_rust_files
 
 class parse_rust_file {
-+pub: 
+pub: FUNCTION
 }
 
 main ..> parse_rust_file
@@ -22,49 +22,49 @@ class MermaidDiagram {
 +to_diagram_syntax() String
 }
 
-Visibility <|-- MermaidDiagram
+Connection <|-- MermaidDiagram
+Function <|-- MermaidDiagram
 Relationship <|-- MermaidDiagram
 Class <|-- MermaidDiagram
-Function <|-- MermaidDiagram
-Connection <|-- MermaidDiagram
 Field <|-- MermaidDiagram
+Visibility <|-- MermaidDiagram
 
 class find_relationships {
-+pub: 
+pub: FUNCTION
 }
 
 main ..> find_relationships
 
 class eval_statements {
--: 
+priv: FUNCTION
 }
 
-find_relationships ..> eval_statements
 eval_expr ..> eval_statements
+find_relationships ..> eval_statements
 
 class eval_arms {
--: 
+priv: FUNCTION
 }
 
 eval_expr ..> eval_arms
 
 class eval_exprs {
--: 
+priv: FUNCTION
 }
 
 eval_expr ..> eval_exprs
 
 class eval_expr {
--: 
+priv: FUNCTION
 }
 
-eval_arms ..> eval_expr
+eval_expr ..> eval_expr
 eval_exprs ..> eval_expr
 eval_statements ..> eval_expr
-eval_expr ..> eval_expr
+eval_arms ..> eval_expr
 
 class check_connection {
--: 
+priv: FUNCTION
 }
 
 eval_statements ..> check_connection
@@ -81,11 +81,11 @@ class Class {
 }
 
 Class --> Function
-Class --> Connection
-Class --> Field
-find_relationships ..> Class
 Class --> Visibility
+Class --> Field
 init_classes ..> Class
+Class --> Connection
+find_relationships ..> Class
 
 class Field {
 ~visibility: Visibility
@@ -116,9 +116,9 @@ class Connection {
 }
 
 find_relationships ..> Connection
-Connection --> Relationship
-check_connection ..> Connection
 Connection ..> Relationship
+check_connection ..> Connection
+Connection --> Relationship
 
 class Relationship {
 +Inheritance: 
@@ -128,6 +128,7 @@ class Relationship {
 
 
 class Visibility {
++None: 
 +Public: 
 +Private: 
 +Internal: 
@@ -143,9 +144,9 @@ class Settings {
 +defaults() Self
 }
 
-main ..> Settings
 Settings --> ImageSettings
 Settings --> DiagramSettings
+main ..> Settings
 
 class ImageSettings {
 +enabled: bool
@@ -160,7 +161,7 @@ class DiagramSettings {
 MermaidDiagram ..> DiagramSettings
 
 class main {
--: 
+priv: FUNCTION
 }
 
 
