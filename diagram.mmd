@@ -59,17 +59,17 @@ class Visibility {
 +from_vis() Self
 }
 class Settings {
-+image_settings: Image_Settings
-+diagram_settings: Diagram_Settings
++image_settings: ImageSettings
++diagram_settings: DiagramSettings
 +defaults() Self
 }
-Settings --> Image_Settings
-Settings --> Diagram_Settings
-class Image_Settings {
+Settings --> ImageSettings
+Settings --> DiagramSettings
+class ImageSettings {
 +enabled: bool
 +scale: u32
 }
-class Diagram_Settings {
+class DiagramSettings {
 +show_parameters: bool
 }
-MermaidDiagram ..> Diagram_Settings
+MermaidDiagram ..> DiagramSettings

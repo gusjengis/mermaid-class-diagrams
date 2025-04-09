@@ -1,11 +1,11 @@
-use crate::{class_diagram_model::*, settings::Diagram_Settings};
+use crate::{class_diagram_model::*, settings::DiagramSettings};
 
 pub trait MermaidDiagram {
-    fn to_diagram_syntax(&self, settings: &Diagram_Settings) -> String;
+    fn to_diagram_syntax(&self, settings: &DiagramSettings) -> String;
 }
 
 impl MermaidDiagram for Class {
-    fn to_diagram_syntax(&self, settings: &Diagram_Settings) -> String {
+    fn to_diagram_syntax(&self, settings: &DiagramSettings) -> String {
         let mut res = "".to_string();
         let header = format!("class {} {{\n", self.name);
         res.push_str(header.as_str());
@@ -32,7 +32,7 @@ impl MermaidDiagram for Class {
 }
 
 impl MermaidDiagram for Function {
-    fn to_diagram_syntax(&self, settings: &Diagram_Settings) -> String {
+    fn to_diagram_syntax(&self, settings: &DiagramSettings) -> String {
         let mut parameters = String::new();
         if settings.show_parameters {
             parameters = self.params.clone();
@@ -48,7 +48,7 @@ impl MermaidDiagram for Function {
 }
 
 impl MermaidDiagram for Field {
-    fn to_diagram_syntax(&self, settings: &Diagram_Settings) -> String {
+    fn to_diagram_syntax(&self, settings: &DiagramSettings) -> String {
         format!(
             "{}{}: {}",
             self.visibility.to_diagram_syntax(settings),
@@ -59,7 +59,7 @@ impl MermaidDiagram for Field {
 }
 
 impl MermaidDiagram for Visibility {
-    fn to_diagram_syntax(&self, settings: &Diagram_Settings) -> String {
+    fn to_diagram_syntax(&self, settings: &DiagramSettings) -> String {
         match self {
             Visibility::Public => "+".to_string(),
             Visibility::Internal => "~".to_string(),
@@ -69,7 +69,7 @@ impl MermaidDiagram for Visibility {
 }
 
 impl MermaidDiagram for Connection {
-    fn to_diagram_syntax(&self, settings: &Diagram_Settings) -> String {
+    fn to_diagram_syntax(&self, settings: &DiagramSettings) -> String {
         format!(
             "{} {} {}",
             self.name_a,
@@ -80,7 +80,7 @@ impl MermaidDiagram for Connection {
 }
 
 impl MermaidDiagram for Relationship {
-    fn to_diagram_syntax(&self, settings: &Diagram_Settings) -> String {
+    fn to_diagram_syntax(&self, settings: &DiagramSettings) -> String {
         match self {
             Relationship::Inheritance => "<|--".to_string(),
             Relationship::Association => "-->".to_string(),
