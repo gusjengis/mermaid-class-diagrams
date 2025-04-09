@@ -1,4 +1,5 @@
 use quote::ToTokens;
+type Vis = syn::Visibility;
 
 #[derive(Clone)]
 pub struct Class {
@@ -35,6 +36,7 @@ pub struct Connection {
 pub enum Relationship {
     Inheritance,
     Association,
+    Dependency,
 }
 
 #[derive(Clone)]
@@ -88,7 +90,7 @@ impl Connection {
 }
 
 impl Visibility {
-    pub fn from_vis(vis: &syn::Visibility) -> Self {
+    pub fn from_vis(vis: &Vis) -> Self {
         match vis {
             syn::Visibility::Public(_) => Visibility::Public,
             syn::Visibility::Restricted(scope) => {

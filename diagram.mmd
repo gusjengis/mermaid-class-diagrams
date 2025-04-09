@@ -21,6 +21,7 @@ Class --> Visibility
 Class --> Field
 Class --> Function
 Class --> Connection
+Class ..> Visibility
 class Field {
 ~visibility: Visibility
 ~name: String
@@ -28,6 +29,7 @@ class Field {
 +new() Self
 }
 Field --> Visibility
+Field ..> Visibility
 class Function {
 ~visibility: Visibility
 ~name: String
@@ -36,6 +38,7 @@ class Function {
 +new() Self
 }
 Function --> Visibility
+Function ..> Visibility
 class Connection {
 ~name_a: String
 ~name_b: String
@@ -43,9 +46,11 @@ class Connection {
 +new() Self
 }
 Connection --> Relationship
+Connection ..> Relationship
 class Relationship {
 +Inheritance: 
 +Association: 
++Dependency: 
 }
 class Visibility {
 +Public: 
@@ -53,3 +58,18 @@ class Visibility {
 +Internal: 
 +from_vis() Self
 }
+class Settings {
++image_settings: Image_Settings
++diagram_settings: Diagram_Settings
++defaults() Self
+}
+Settings --> Image_Settings
+Settings --> Diagram_Settings
+class Image_Settings {
++enabled: bool
++scale: u32
+}
+class Diagram_Settings {
++show_parameters: bool
+}
+MermaidDiagram ..> Diagram_Settings

@@ -36,7 +36,32 @@ pub fn find_relationships(
                 }
             }
             Item::Enum(item) => {}
-            Item::Trait(item) => {}
+            Item::Trait(trait_) => {
+                for item in &trait_.items {
+                    match item {
+                        TraitItem::Fn(method) => {
+                            for param in method.sig.inputs.iter() {
+                                if let syn::FnArg::Typed(p) = param {
+                                    for token in p.to_token_stream() {
+                                        if class_map.contains_key(token.to_string().as_str()) {
+                                            let mut class = &mut classes[*class_map
+                                                .get(token.to_string().as_str())
+                                                .unwrap()];
+                                            let connection = Connection::new(
+                                                trait_.ident.to_string(),
+                                                class.name.clone(),
+                                                Relationship::Dependency,
+                                            );
+                                            class.connections.push(connection);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+            }
             Item::Impl(item) => match &item.trait_ {
                 Some(trait__) => {
                     let trait_name = trait__.1.get_ident().unwrap();
@@ -87,6 +112,23 @@ pub fn find_relationships(
                                         params.join(", "),
                                         return_type,
                                     ));
+
+                                    for param in method.sig.inputs.iter() {
+                                        if let syn::FnArg::Typed(p) = param {
+                                            for token in p.to_token_stream() {
+                                                if class_map
+                                                    .contains_key(token.to_string().as_str())
+                                                {
+                                                    let connection = Connection::new(
+                                                        class_name.clone(),
+                                                        token.to_string(),
+                                                        Relationship::Dependency,
+                                                    );
+                                                    class.connections.push(connection);
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
 
                                 _ => {}

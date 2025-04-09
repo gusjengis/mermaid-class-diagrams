@@ -3,11 +3,13 @@ mod file_util;
 mod find_relationships;
 mod init_classes;
 mod mermaid_diagram;
+mod settings;
 
 use crate::file_util::{get_rust_files, parse_rust_file};
 use crate::find_relationships::find_relationships;
 use crate::init_classes::init_classes;
 use crate::mermaid_diagram::MermaidDiagram;
+use crate::settings::Settings;
 use std::collections::HashMap;
 use std::env;
 use std::error::Error;
@@ -15,6 +17,7 @@ use std::fs;
 use std::process::Command;
 
 fn main() -> Result<(), Box<dyn Error>> {
+    let mut settings = Settings::defaults();
     // Get command-line arguments
     let args: Vec<String> = env::args().collect();
 
@@ -53,7 +56,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // construct output
     for class in classes {
-        diagram.push_str(class.to_diagram_syntax().as_str());
+        diagram.push_str(class.to_diagram_syntax(&settings.diagram_settings).as_str());
     }
 
     // Write the output to a file, e.g. diagram.mmd
@@ -73,7 +76,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .arg("-o")
         .arg("diagram.png")
         .arg("--scale")
-        .arg("10")
+        .arg(settings.image_settings.scale.to_string().as_str())
         .output();
 
     match output {
