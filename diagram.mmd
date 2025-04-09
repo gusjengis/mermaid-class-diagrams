@@ -1,45 +1,55 @@
 classDiagram
 
-class Class {
-  +visibility: Visibility 
-  +fields : Vec < Field > 
-  +functions : Vec < Function > 
-  +children : Vec < String > 
-}
-
-Class <|-- Visibility
-Class <|-- Field
-Class <|-- Function
-
-class Field {
-  +pub visibilty : Visibility 
-  +pub name : String 
-  +pub type_string : String 
-}
-
-Field <|-- Visibility
-
-class Function {
-  +pub visibilty : Visibility 
-  +pub name : String 
-  +pub parameters : Vec < Parameter > 
-  +pub return_type : String 
-}
-
-Function <|-- Visibility
-Function <|-- Parameter
-
-class Parameter {
-  +pub name : String 
-  +pub type_string : String 
-}
-
-class Visibility {
-  +Public
-  +Private
-}
-
 class MermaidDiagram {
-  +to_diagram_syntax() -> String
++to_diagram_syntax() String
 }
-
+Class <|-- MermaidDiagram
+Function <|-- MermaidDiagram
+Field <|-- MermaidDiagram
+Visibility <|-- MermaidDiagram
+Connection <|-- MermaidDiagram
+Relationship <|-- MermaidDiagram
+class Class {
+~visibility: Visibility
+~name: String
+~fields: Vec < Field >
+~functions: Vec < Function >
+~connections: Vec < Connection >
++new() Self
+}
+Class --> Visibility
+Class --> Field
+Class --> Function
+Class --> Connection
+class Field {
+~visibility: Visibility
+~name: String
+~type_string: String
++new() Self
+}
+Field --> Visibility
+class Function {
+~visibility: Visibility
+~name: String
+~params: String
+~return_type: String
++new() Self
+}
+Function --> Visibility
+class Connection {
+~name_a: String
+~name_b: String
+~relationship: Relationship
++new() Self
+}
+Connection --> Relationship
+class Relationship {
++Inheritance: 
++Association: 
+}
+class Visibility {
++Public: 
++Private: 
++Internal: 
++from_vis() Self
+}

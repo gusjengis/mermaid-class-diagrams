@@ -1,14 +1,14 @@
-mod class;
-mod discover_types;
-mod get_rust_files;
-mod parse_rust_file;
-mod process_file;
+mod class_diagram_model;
+mod file_util;
+mod find_relationships;
+mod init_classes;
+mod mermaid_diagram;
 
-use crate::discover_types::*;
-use crate::get_rust_files::*;
-use crate::parse_rust_file::*;
-use crate::process_file::*;
-use std::collections::HashSet;
+use crate::file_util::{get_rust_files, parse_rust_file};
+use crate::find_relationships::find_relationships;
+use crate::init_classes::init_classes;
+use crate::mermaid_diagram::MermaidDiagram;
+use std::collections::HashMap;
 use std::env;
 use std::error::Error;
 use std::fs;
@@ -24,7 +24,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Simple argument parsing
     for i in 1..args.len() {
-        if args[i] == "--no-png" {
+        if args[i] == "--png" {
             generate_png = false;
         } else if !args[i].starts_with("--") {
             dir_to_scan = &args[i];
@@ -32,16 +32,28 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
     let rust_files = get_rust_files(dir_to_scan);
     let mut diagram = String::from("classDiagram\n\n");
-    let mut defined_types = vec![];
+    let mut class_names = vec![];
+    let mut classes = vec![];
     for file_path in &rust_files {
         let syntax = parse_rust_file(file_path)?;
-        defined_types.extend_from_slice(discover_types(&syntax).as_slice());
+        let (a, b) = init_classes(&syntax);
+        class_names.extend_from_slice(a.as_slice());
+        classes.extend_from_slice(b.as_slice());
     }
-    let type_set: HashSet<&String> =
-        HashSet::from_iter(defined_types.iter().take(defined_types.len()));
+
+    let mut class_map = HashMap::<&str, usize>::new();
+    for i in 0..class_names.len() {
+        class_map.insert(class_names[i].as_str(), i);
+    }
+
     for file_path in &rust_files {
         let syntax = parse_rust_file(file_path)?;
-        process_file(&syntax, &mut diagram, &type_set);
+        find_relationships(&syntax, &class_map, &mut classes);
+    }
+
+    // construct output
+    for class in classes {
+        diagram.push_str(class.to_diagram_syntax().as_str());
     }
 
     // Write the output to a file, e.g. diagram.mmd
@@ -60,6 +72,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         .arg("diagram.mmd")
         .arg("-o")
         .arg("diagram.png")
+        .arg("--scale")
+        .arg("10")
         .output();
 
     match output {

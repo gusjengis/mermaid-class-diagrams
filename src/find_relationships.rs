@@ -1,0 +1,101 @@
+use quote::ToTokens;
+use std::clone;
+use std::collections::HashMap;
+use std::f32::NAN;
+use std::path::Path;
+use std::{any::Any, collections::HashSet};
+use syn::{File, Item, TraitItem, Type, UseName, Visibility};
+
+use crate::class_diagram_model::{Class, Connection, Function, Relationship};
+
+pub fn find_relationships(
+    syntax: &File,
+    class_map: &HashMap<&str, usize>,
+    classes: &mut Vec<Class>,
+) {
+    for item in &syntax.items {
+        let mut item_name = "".to_string();
+        // let mut children = vec![];
+        match item {
+            Item::Struct(item) => {
+                item_name = item.ident.to_string();
+                if class_map.contains_key(item_name.as_str()) {
+                    for field in &item.fields {
+                        for token in field.to_token_stream() {
+                            if class_map.contains_key(token.to_string().as_str()) {
+                                classes[*class_map.get(item_name.as_str()).unwrap()]
+                                    .connections
+                                    .push(Connection::new(
+                                        item.ident.to_string(),
+                                        token.to_string(),
+                                        Relationship::Association,
+                                    ));
+                            }
+                        }
+                    }
+                }
+            }
+            Item::Enum(item) => {}
+            Item::Trait(item) => {}
+            Item::Impl(item) => match &item.trait_ {
+                Some(trait__) => {
+                    let trait_name = trait__.1.get_ident().unwrap();
+                    if class_map.contains_key(trait_name.to_string().as_str()) {
+                        let class =
+                            &mut classes[*class_map.get(trait_name.to_string().as_str()).unwrap()];
+                        let connection = Connection::new(
+                            item.self_ty.to_token_stream().to_string(),
+                            trait_name.to_string(),
+                            Relationship::Inheritance,
+                        );
+                        class.connections.push(connection);
+                    }
+                }
+                None => {
+                    let class_name = item.self_ty.to_token_stream().to_string();
+                    if class_map.contains_key(class_name.as_str()) {
+                        let class = &mut classes[*class_map.get(class_name.as_str()).unwrap()];
+                        for item in &item.items {
+                            match item {
+                                syn::ImplItem::Fn(method) => {
+                                    let visibility =
+                                        crate::class_diagram_model::Visibility::from_vis(
+                                            &method.vis,
+                                        );
+                                    let name = method.sig.ident.to_string();
+                                    let return_type =
+                                        if let syn::ReturnType::Type(_, ty) = &method.sig.output {
+                                            format!("{}", quote::quote!(#ty))
+                                        } else {
+                                            String::new()
+                                        };
+                                    let params: Vec<String> = method
+                                        .sig
+                                        .inputs
+                                        .iter()
+                                        .filter_map(|param| {
+                                            if let syn::FnArg::Typed(pat_type) = param {
+                                                Some(pat_type.to_token_stream().to_string())
+                                            } else {
+                                                None
+                                            }
+                                        })
+                                        .collect();
+                                    class.functions.push(Function::new(
+                                        visibility,
+                                        name,
+                                        params.join(", "),
+                                        return_type,
+                                    ));
+                                }
+
+                                _ => {}
+                            }
+                        }
+                    }
+                }
+            },
+            _ => {}
+        }
+    }
+}
