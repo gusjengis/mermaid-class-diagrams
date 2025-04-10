@@ -24,11 +24,11 @@ Trait
 }
 
 Class <|-- MermaidDiagram
-Relationship <|-- MermaidDiagram
 Field <|-- MermaidDiagram
+Function <|-- MermaidDiagram
 Visibility <|-- MermaidDiagram
 Connection <|-- MermaidDiagram
-Function <|-- MermaidDiagram
+Relationship <|-- MermaidDiagram
 
 class find_relationships {
 Fn
@@ -36,40 +36,24 @@ Fn
 
 main ..> find_relationships
 
-class eval_statements {
+class check_tokens {
 Fn
 }
 
-find_relationships ..> eval_statements
-eval_expr ..> eval_statements
+check_tokens ..> check_tokens
+find_relationships ..> check_tokens
 
-class eval_arms {
+class check_token {
 Fn
 }
 
-eval_expr ..> eval_arms
+check_tokens ..> check_token
 
-class eval_exprs {
+class create_connection {
 Fn
 }
 
-eval_expr ..> eval_exprs
-
-class eval_expr {
-Fn
-}
-
-eval_statements ..> eval_expr
-eval_arms ..> eval_expr
-eval_exprs ..> eval_expr
-eval_expr ..> eval_expr
-
-class check_connection {
-Fn
-}
-
-eval_statements ..> check_connection
-eval_expr ..> check_connection
+check_token ..> create_connection
 
 class Class {
 Struct
@@ -83,12 +67,12 @@ Struct
 +add_connection() 
 }
 
-init_classes ..> Class
 Class --> Field
+init_classes ..> Class
 find_relationships ..> Class
 Class --> Function
-Class --> Connection
 Class --> Visibility
+Class --> Connection
 
 class Field {
 Struct
@@ -98,8 +82,9 @@ Struct
 +new() Self
 }
 
-Field --> Visibility
+init_classes ..> Field
 Field ..> Visibility
+Field --> Visibility
 
 class Function {
 Struct
@@ -110,8 +95,10 @@ Struct
 +new() Self
 }
 
+find_relationships ..> Function
 Function ..> Visibility
 Function --> Visibility
+init_classes ..> Function
 
 class Connection {
 Struct
@@ -121,10 +108,10 @@ Struct
 +new() Self
 }
 
-find_relationships ..> Connection
 Connection ..> Relationship
-check_connection ..> Connection
 Connection --> Relationship
+find_relationships ..> Connection
+create_connection ..> Connection
 
 class Relationship {
 Enum
@@ -133,7 +120,7 @@ Enum
 +Dependency: 
 }
 
-check_connection ..> Relationship
+create_connection ..> Relationship
 find_relationships ..> Relationship
 
 class Visibility {
@@ -144,8 +131,8 @@ Enum
 +from_vis() Self
 }
 
-find_relationships ..> Visibility
 init_classes ..> Visibility
+find_relationships ..> Visibility
 
 class Settings {
 Struct
@@ -155,8 +142,8 @@ Struct
 }
 
 Settings --> DiagramSettings
-main ..> Settings
 Settings --> ImageSettings
+main ..> Settings
 
 class ImageSettings {
 Struct
