@@ -10,6 +10,7 @@ impl MermaidDiagram for Class {
         let header = format!("class {} {{\n", self.name);
         res.push_str(header.as_str());
 
+        res.push_str(format!("{}\n", self.type_).as_str());
         for field in &self.fields {
             res.push_str(field.to_diagram_syntax(settings).as_str());
             res.push_str("\n");
@@ -68,7 +69,6 @@ impl MermaidDiagram for Visibility {
             Visibility::Public => "+".to_string(),
             Visibility::Internal => "~".to_string(),
             Visibility::Private => "-".to_string(),
-            Visibility::None => "".to_string(),
         }
     }
 }

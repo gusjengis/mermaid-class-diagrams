@@ -6,6 +6,7 @@ type Vis = syn::Visibility;
 #[derive(Clone)]
 pub struct Class {
     pub(crate) visibility: Visibility,
+    pub(crate) type_: String,
     pub(crate) name: String,
     pub(crate) fields: Vec<Field>,
     pub(crate) functions: Vec<Function>,
@@ -43,16 +44,16 @@ pub enum Relationship {
 
 #[derive(Clone)]
 pub enum Visibility {
-    None,
     Public,
     Private,
     Internal,
 }
 
 impl Class {
-    pub fn new(visibility: Visibility, name: String) -> Self {
+    pub fn new(visibility: Visibility, type_: String, name: String) -> Self {
         Self {
             visibility,
+            type_,
             name,
             fields: vec![],
             functions: vec![],

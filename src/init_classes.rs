@@ -12,7 +12,8 @@ pub fn init_classes(syntax: &File) -> (Vec<String>, Vec<Class>) {
             Item::Struct(item) => {
                 let visibility = Visibility::from_vis(&item.vis);
 
-                let mut class = Class::new(visibility, item.ident.to_string());
+                let mut class =
+                    Class::new(visibility, "Struct".to_string(), item.ident.to_string());
                 for field in &item.fields {
                     class.fields.push(Field::new(
                         Visibility::from_vis(&field.vis),
@@ -30,7 +31,7 @@ pub fn init_classes(syntax: &File) -> (Vec<String>, Vec<Class>) {
             }
             Item::Enum(item) => {
                 let visibility = Visibility::from_vis(&item.vis);
-                let mut class = Class::new(visibility, item.ident.to_string());
+                let mut class = Class::new(visibility, "Enum".to_string(), item.ident.to_string());
                 for field in &item.variants {
                     class.fields.push(Field::new(
                         Visibility::from_vis(&item.vis),
@@ -43,7 +44,11 @@ pub fn init_classes(syntax: &File) -> (Vec<String>, Vec<Class>) {
                 classes.push(class);
             }
             Item::Trait(item) => {
-                let mut class = Class::new(Visibility::from_vis(&item.vis), item.ident.to_string());
+                let mut class = Class::new(
+                    Visibility::from_vis(&item.vis),
+                    "Trait".to_string(),
+                    item.ident.to_string(),
+                );
 
                 // Add methods from the trait
                 for signature in &item.items {
@@ -85,11 +90,11 @@ pub fn init_classes(syntax: &File) -> (Vec<String>, Vec<Class>) {
                 if vis == "" {
                     vis = "priv".to_string();
                 }
-                let mut class =
-                    Class::new(Visibility::from_vis(&item.vis), item.sig.ident.to_string());
-                class
-                    .fields
-                    .push(Field::new(Visibility::None, vis, "FUNCTION".to_string()));
+                let mut class = Class::new(
+                    Visibility::from_vis(&item.vis),
+                    "Fn".to_string(),
+                    item.sig.ident.to_string(),
+                );
                 class_names.push(item.sig.ident.to_string());
                 classes.push(class);
             }
