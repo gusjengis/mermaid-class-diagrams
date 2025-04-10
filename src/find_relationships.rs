@@ -183,6 +183,9 @@ fn eval_statements(
         match statement {
             syn::Stmt::Local(local) => {
                 println!("Stmt:Local");
+                if let Some(init) = &local.init {
+                    eval_expr(&init.expr, class_map, classes, ident.clone());
+                }
                 check_connection(local.to_token_stream(), class_map, classes, ident.clone());
             }
             syn::Stmt::Item(item) => {
@@ -265,7 +268,9 @@ fn eval_expr(
         }
         syn::Expr::Call(expr) => {
             println!("Expr:Call");
-            check_connection(expr.to_token_stream(), class_map, classes, ident.clone());
+            eval_expr(&expr.func, class_map, classes, ident.clone());
+            let exprs = expr.args.iter().take(expr.args.len()).collect();
+            eval_exprs(exprs, class_map, classes, ident.clone());
         }
         syn::Expr::Cast(expr) => {
             println!("Expr:Cast");
@@ -322,14 +327,20 @@ fn eval_expr(
         }
         syn::Expr::Loop(expr) => {
             println!("Expr:Loop");
-            check_connection(expr.to_token_stream(), class_map, classes, ident.clone());
+            eval_statements(&expr.body.stmts, class_map, classes, ident.clone());
         }
         syn::Expr::Macro(expr) => {
             println!("Expr:Macro");
-            check_connection(expr.to_token_stream(), class_map, classes, ident.clone());
+            check_connection(
+                expr.mac.to_token_stream().clone(),
+                class_map,
+                classes,
+                ident.clone(),
+            );
         }
         syn::Expr::Match(expr) => {
             println!("Expr:Match");
+            eval_expr(&expr.expr, class_map, classes, ident.clone());
             eval_arms(&expr.arms, class_map, classes, ident);
         }
         syn::Expr::MethodCall(expr) => {
