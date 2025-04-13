@@ -1,11 +1,7 @@
 use proc_macro2::{TokenStream, TokenTree};
 use quote::ToTokens;
-use std::clone;
 use std::collections::HashMap;
-use std::f32::NAN;
-use std::path::Path;
-use std::{any::Any, collections::HashSet};
-use syn::{File, Item, Token, TraitItem, Type, UseName, Visibility, token};
+use syn::{File, Item, TraitItem};
 
 use crate::class_diagram_model::{Class, Connection, Function, Relationship};
 
@@ -46,7 +42,7 @@ pub fn find_relationships(
                                 if let syn::FnArg::Typed(p) = param {
                                     for token in p.to_token_stream() {
                                         if class_map.contains_key(token.to_string().as_str()) {
-                                            let mut class = &mut classes[*class_map
+                                            let class = &mut classes[*class_map
                                                 .get(token.to_string().as_str())
                                                 .unwrap()];
                                             let connection = Connection::new(
@@ -147,7 +143,7 @@ pub fn find_relationships(
                     if let syn::FnArg::Typed(p) = param {
                         for token in p.to_token_stream() {
                             if class_map.contains_key(token.to_string().as_str()) {
-                                let mut class = &mut classes
+                                let class = &mut classes
                                     [*class_map.get(token.to_string().as_str()).unwrap()];
                                 let connection = Connection::new(
                                     method.sig.ident.to_string(),

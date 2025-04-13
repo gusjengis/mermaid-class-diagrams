@@ -90,7 +90,7 @@ pub fn init_classes(syntax: &File) -> (Vec<String>, Vec<Class>) {
                 if vis == "" {
                     vis = "priv".to_string();
                 }
-                let mut class = Class::new(
+                let class = Class::new(
                     Visibility::from_vis(&item.vis),
                     "Fn".to_string(),
                     item.sig.ident.to_string(),

@@ -1,5 +1,5 @@
-use std::{fs, path::Path};
-use syn::{File, Item};
+use std::fs;
+use syn::File;
 use walkdir::WalkDir;
 
 pub fn get_rust_files(dir: &str) -> Vec<String> {

@@ -17,7 +17,7 @@ use std::fs;
 use std::process::Command;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let mut settings = Settings::defaults();
+    let settings = Settings::defaults();
     // Get command-line arguments
     let args: Vec<String> = env::args().collect();
 

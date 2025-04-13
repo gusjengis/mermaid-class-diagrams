@@ -23,11 +23,11 @@ Trait
 +to_diagram_syntax() String
 }
 
-Class <|-- MermaidDiagram
+Connection <|-- MermaidDiagram
 Function <|-- MermaidDiagram
 Field <|-- MermaidDiagram
+Class <|-- MermaidDiagram
 Visibility <|-- MermaidDiagram
-Connection <|-- MermaidDiagram
 Relationship <|-- MermaidDiagram
 
 class find_relationships {
@@ -67,12 +67,12 @@ Struct
 +add_connection() 
 }
 
-Class --> Connection
 Class --> Visibility
 Class --> Field
 init_classes ..> Class
 find_relationships ..> Class
 Class --> Function
+Class --> Connection
 
 class Field {
 Struct
@@ -96,9 +96,9 @@ Struct
 }
 
 init_classes ..> Function
+Function --> Visibility
 find_relationships ..> Function
 Function ..> Visibility
-Function --> Visibility
 
 class Connection {
 Struct
@@ -108,10 +108,10 @@ Struct
 +new() Self
 }
 
-Connection ..> Relationship
-find_relationships ..> Connection
-create_connection ..> Connection
 Connection --> Relationship
+find_relationships ..> Connection
+Connection ..> Relationship
+create_connection ..> Connection
 
 class Relationship {
 Enum
@@ -120,8 +120,8 @@ Enum
 +Dependency: 
 }
 
-find_relationships ..> Relationship
 create_connection ..> Relationship
+find_relationships ..> Relationship
 
 class Visibility {
 Enum
@@ -141,10 +141,10 @@ Struct
 +defaults() Self
 }
 
+main ..> Settings
 Settings --> ImageSettings
 Settings --> DiagramSettings
 start_lsp_servers ..> Settings
-main ..> Settings
 
 class ImageSettings {
 Struct
