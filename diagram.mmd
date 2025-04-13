@@ -23,12 +23,12 @@ Trait
 +to_diagram_syntax() String
 }
 
-Connection <|-- MermaidDiagram
-Function <|-- MermaidDiagram
-Field <|-- MermaidDiagram
-Class <|-- MermaidDiagram
-Visibility <|-- MermaidDiagram
 Relationship <|-- MermaidDiagram
+Class <|-- MermaidDiagram
+Function <|-- MermaidDiagram
+Connection <|-- MermaidDiagram
+Field <|-- MermaidDiagram
+Visibility <|-- MermaidDiagram
 
 class find_relationships {
 Fn
@@ -57,7 +57,7 @@ check_token ..> create_connection
 
 class Class {
 Struct
-~visibility: Visibility
+~_visibility: Visibility
 ~type_: String
 ~name: String
 ~fields: Vec < Field >
@@ -67,11 +67,11 @@ Struct
 +add_connection() 
 }
 
+Class --> Function
 Class --> Visibility
+find_relationships ..> Class
 Class --> Field
 init_classes ..> Class
-find_relationships ..> Class
-Class --> Function
 Class --> Connection
 
 class Field {
@@ -82,9 +82,9 @@ Struct
 +new() Self
 }
 
-init_classes ..> Field
 Field --> Visibility
 Field ..> Visibility
+init_classes ..> Field
 
 class Function {
 Struct
@@ -96,9 +96,9 @@ Struct
 }
 
 init_classes ..> Function
+Function ..> Visibility
 Function --> Visibility
 find_relationships ..> Function
-Function ..> Visibility
 
 class Connection {
 Struct
@@ -108,10 +108,10 @@ Struct
 +new() Self
 }
 
-Connection --> Relationship
-find_relationships ..> Connection
 Connection ..> Relationship
 create_connection ..> Connection
+find_relationships ..> Connection
+Connection --> Relationship
 
 class Relationship {
 Enum
@@ -120,8 +120,8 @@ Enum
 +Dependency: 
 }
 
-create_connection ..> Relationship
 find_relationships ..> Relationship
+create_connection ..> Relationship
 
 class Visibility {
 Enum
@@ -142,13 +142,13 @@ Struct
 }
 
 main ..> Settings
-Settings --> ImageSettings
 Settings --> DiagramSettings
+Settings --> ImageSettings
 start_lsp_servers ..> Settings
 
 class ImageSettings {
 Struct
-+enabled: bool
++_enabled: bool
 +scale: u32
 }
 
@@ -169,6 +169,7 @@ class start_lsp_servers {
 Fn
 }
 
+main ..> start_lsp_servers
 
 class start_lsp_server {
 Fn

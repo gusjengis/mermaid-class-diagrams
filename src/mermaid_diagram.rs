@@ -13,24 +13,24 @@ impl MermaidDiagram for Class {
         res.push_str(format!("{}\n", self.type_).as_str());
         for field in &self.fields {
             res.push_str(field.to_diagram_syntax(settings).as_str());
-            res.push_str("\n");
+            res.push('\n');
         }
 
         for function in &self.functions {
             res.push_str(function.to_diagram_syntax(settings).as_str());
-            res.push_str("\n");
+            res.push('\n');
         }
 
         res.push_str("}\n");
 
-        res.push_str("\n");
+        res.push('\n');
 
         for connection in self.connections.values() {
             res.push_str(connection.to_diagram_syntax(settings).as_str());
-            res.push_str("\n");
+            res.push('\n');
         }
 
-        res.push_str("\n");
+        res.push('\n');
 
         res
     }
@@ -64,7 +64,7 @@ impl MermaidDiagram for Field {
 }
 
 impl MermaidDiagram for Visibility {
-    fn to_diagram_syntax(&self, settings: &DiagramSettings) -> String {
+    fn to_diagram_syntax(&self, _settings: &DiagramSettings) -> String {
         match self {
             Visibility::Public => "+".to_string(),
             Visibility::Internal => "~".to_string(),
@@ -85,7 +85,7 @@ impl MermaidDiagram for Connection {
 }
 
 impl MermaidDiagram for Relationship {
-    fn to_diagram_syntax(&self, settings: &DiagramSettings) -> String {
+    fn to_diagram_syntax(&self, _settings: &DiagramSettings) -> String {
         match self {
             Relationship::Inheritance => "<|--".to_string(),
             Relationship::Association => "-->".to_string(),

@@ -4,7 +4,7 @@ pub struct Settings {
 }
 
 pub struct ImageSettings {
-    pub enabled: bool,
+    pub _enabled: bool,
     pub scale: u32,
 }
 
@@ -16,7 +16,7 @@ impl Settings {
     pub fn defaults() -> Self {
         Self {
             image_settings: ImageSettings {
-                enabled: true,
+                _enabled: true,
                 scale: 5,
             },
             diagram_settings: DiagramSettings {

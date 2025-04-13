@@ -11,11 +11,10 @@ pub fn find_relationships(
     classes: &mut Vec<Class>,
 ) {
     for item in &syntax.items {
-        let mut item_name = "".to_string();
         // let mut children = vec![];
         match item {
             Item::Struct(item) => {
-                item_name = item.ident.to_string();
+                let item_name = item.ident.to_string();
                 if class_map.contains_key(item_name.as_str()) {
                     for field in &item.fields {
                         for token in field.to_token_stream() {
@@ -33,7 +32,7 @@ pub fn find_relationships(
                     }
                 }
             }
-            Item::Enum(item) => {}
+            Item::Enum(_item) => {}
             Item::Trait(trait_) => {
                 for item in &trait_.items {
                     match item {

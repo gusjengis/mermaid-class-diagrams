@@ -5,7 +5,7 @@ type Vis = syn::Visibility;
 
 #[derive(Clone)]
 pub struct Class {
-    pub(crate) visibility: Visibility,
+    pub(crate) _visibility: Visibility,
     pub(crate) type_: String,
     pub(crate) name: String,
     pub(crate) fields: Vec<Field>,
@@ -52,7 +52,7 @@ pub enum Visibility {
 impl Class {
     pub fn new(visibility: Visibility, type_: String, name: String) -> Self {
         Self {
-            visibility,
+            _visibility: visibility,
             type_,
             name,
             fields: vec![],

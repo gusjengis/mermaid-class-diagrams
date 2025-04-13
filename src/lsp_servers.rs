@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use lsp_servers::{lsp_servers::relevant_lsp_servers, settings::Settings};
 
 pub fn start_lsp_servers(dir: &str) {

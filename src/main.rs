@@ -2,8 +2,11 @@ mod class_diagram_model;
 mod file_util;
 mod find_relationships;
 mod init_classes;
+mod lsp_servers;
 mod mermaid_diagram;
 mod settings;
+
+use lsp_servers::start_lsp_servers;
 
 use crate::file_util::{get_rust_files, parse_rust_file};
 use crate::find_relationships::find_relationships;
@@ -23,16 +26,19 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Parse arguments
     let mut dir_to_scan = "src";
-    let mut generate_png = true;
+    let mut _generate_png = true;
 
     // Simple argument parsing
     for i in 1..args.len() {
         if args[i] == "--png" {
-            generate_png = false;
+            _generate_png = false;
         } else if !args[i].starts_with("--") {
             dir_to_scan = &args[i];
         }
     }
+
+    start_lsp_servers(dir_to_scan);
+
     let rust_files = get_rust_files(dir_to_scan);
     let mut diagram = String::from("classDiagram\n\n");
     let mut class_names = vec![];

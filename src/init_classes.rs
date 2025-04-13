@@ -86,10 +86,6 @@ pub fn init_classes(syntax: &File) -> (Vec<String>, Vec<Class>) {
                 classes.push(class);
             }
             Item::Fn(item) => {
-                let mut vis = item.vis.to_token_stream().to_string();
-                if vis == "" {
-                    vis = "priv".to_string();
-                }
                 let class = Class::new(
                     Visibility::from_vis(&item.vis),
                     "Fn".to_string(),
