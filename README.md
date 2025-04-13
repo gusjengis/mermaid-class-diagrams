@@ -3,4 +3,3 @@ The goal of this project is to generate mermaid class diagrams for any rust prog
 
 Like this:
 ![](diagram.png)
-
