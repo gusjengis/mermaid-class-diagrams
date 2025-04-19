@@ -23,12 +23,12 @@ Trait
 +to_diagram_syntax() String
 }
 
-Relationship <|-- MermaidDiagram
-Class <|-- MermaidDiagram
 Function <|-- MermaidDiagram
-Connection <|-- MermaidDiagram
 Field <|-- MermaidDiagram
 Visibility <|-- MermaidDiagram
+Class <|-- MermaidDiagram
+Relationship <|-- MermaidDiagram
+Connection <|-- MermaidDiagram
 
 class find_relationships {
 Fn
@@ -67,12 +67,12 @@ Struct
 +add_connection() 
 }
 
-Class --> Function
+Class --> Connection
 Class --> Visibility
-find_relationships ..> Class
 Class --> Field
 init_classes ..> Class
-Class --> Connection
+Class --> Function
+find_relationships ..> Class
 
 class Field {
 Struct
@@ -82,9 +82,9 @@ Struct
 +new() Self
 }
 
-Field --> Visibility
 Field ..> Visibility
 init_classes ..> Field
+Field --> Visibility
 
 class Function {
 Struct
@@ -95,10 +95,10 @@ Struct
 +new() Self
 }
 
-init_classes ..> Function
 Function ..> Visibility
 Function --> Visibility
 find_relationships ..> Function
+init_classes ..> Function
 
 class Connection {
 Struct
@@ -109,8 +109,8 @@ Struct
 }
 
 Connection ..> Relationship
-create_connection ..> Connection
 find_relationships ..> Connection
+create_connection ..> Connection
 Connection --> Relationship
 
 class Relationship {
@@ -131,8 +131,8 @@ Enum
 +from_vis() Self
 }
 
-find_relationships ..> Visibility
 init_classes ..> Visibility
+find_relationships ..> Visibility
 
 class Settings {
 Struct
@@ -141,9 +141,9 @@ Struct
 +defaults() Self
 }
 
+Settings --> ImageSettings
 main ..> Settings
 Settings --> DiagramSettings
-Settings --> ImageSettings
 start_lsp_servers ..> Settings
 
 class ImageSettings {
@@ -164,6 +164,12 @@ class main {
 Fn
 }
 
+
+class drop {
+Fn
+}
+
+main ..> drop
 
 class start_lsp_servers {
 Fn

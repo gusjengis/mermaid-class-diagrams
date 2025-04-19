@@ -1,4 +1,6 @@
+mod capabilities;
 mod class_diagram_model;
+mod drop;
 mod file_util;
 mod find_relationships;
 mod init_classes;
@@ -6,6 +8,7 @@ mod lsp_servers;
 mod mermaid_diagram;
 mod settings;
 
+use drop::drop;
 use lsp_servers::start_lsp_servers;
 
 use crate::file_util::{get_rust_files, parse_rust_file};
@@ -19,7 +22,8 @@ use std::error::Error;
 use std::fs;
 use std::process::Command;
 
-fn main() -> Result<(), Box<dyn Error>> {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
     let settings = Settings::defaults();
     // Get command-line arguments
     let args: Vec<String> = env::args().collect();
@@ -37,7 +41,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
     }
 
-    start_lsp_servers(dir_to_scan);
+    let mut servers = start_lsp_servers(dir_to_scan).await;
 
     let rust_files = get_rust_files(dir_to_scan);
     let mut diagram = String::from("classDiagram\n\n");
@@ -105,6 +109,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                 "Make sure you have mermaid-cli installed (npm install -g @mermaid-js/mermaid-cli)"
             );
         }
+    }
+
+    for server in &mut servers {
+        drop(server).await;
     }
 
     Ok(())
