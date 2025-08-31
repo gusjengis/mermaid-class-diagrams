@@ -48,6 +48,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let mut class_names = vec![];
     let mut classes = vec![];
     for file_path in &rust_files {
+        // println!("{:?}", file_path); // in case you want to see all files it looks at, good candidate for an arg
         let syntax = parse_rust_file(file_path)?;
         let (a, b) = init_classes(&syntax);
         class_names.extend_from_slice(a.as_slice());
@@ -77,10 +78,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     println!("Generating PNG from diagram...");
     let sudo_user = env::var("SUDO_USER").unwrap_or_else(|_| "your_username".to_string());
 
-    let output = Command::new("sudo")
-        .arg("-u")
-        .arg(&sudo_user)
-        .arg("mmdc")
+    let output = Command::new("mmdc")
         .arg("-i")
         .arg("diagram.mmd")
         .arg("-o")

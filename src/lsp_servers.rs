@@ -51,8 +51,8 @@ pub async fn start_lsp_server(server: &str) -> LspServer {
         })
         .await;
 
-    // todo - figure out how if I need to parse this mess and if so how to do it
-    println!("{:?}", initialize_result.unwrap());
+    // TODO: - figure out how if I need to parse this mess and if so how to do it
+    // println!("{:?}", initialize_result.unwrap());
 
     // initialized notification
     server.initialized().await;
